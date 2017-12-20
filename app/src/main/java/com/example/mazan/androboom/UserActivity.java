@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,14 +15,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -41,13 +52,14 @@ public class UserActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-
         // on demande une instance du mécanisme d'authentification
         FirebaseAuth auth = FirebaseAuth.getInstance();
         // la méthode ci-dessous renvoi l'utilisateur connecté ou null si personne
         if (auth.getCurrentUser() != null) {
             // déjà connecté
             Log.v("AndroBoum", "je suis déjà connecté sous l'email :" + auth.getCurrentUser().getEmail());
+            TextView email = (TextView) findViewById(R.id.email);
+            email.setText("Email : " + auth.getCurrentUser().getEmail());
         } else
 
         {
@@ -59,8 +71,7 @@ public class UserActivity extends AppCompatActivity {
                     .build(), 123);
         }
 
-        TextView email = (TextView) findViewById(R.id.email);
-        email.setText("Email : " + auth.getCurrentUser().getEmail());
+
 
 
 
@@ -93,8 +104,11 @@ public class UserActivity extends AppCompatActivity {
 
             // Authentification réussie
             if (resultCode == RESULT_OK) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
                 Log.v("AndroBoum", "je me suis connecté et mon email est :" +
                         response.getEmail());
+                TextView email = (TextView) findViewById(R.id.email);
+                email.setText("Email : " + auth.getCurrentUser().getEmail());
                 return;
             } else {
                 // echec de l'authentification
@@ -181,7 +195,59 @@ public class UserActivity extends AppCompatActivity {
     }
 
 
+    private StorageReference getCloudStorageReference()
+    {     // on va chercher l'email de l'utilisateur connecté
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth == null) return null;
+        String email = auth.getCurrentUser().getEmail();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        // on crée l'objet dans le sous-dossier de nom l'email
+        StorageReference photoRef = storageRef.child(email + "/photo.jpg");
+        return photoRef; }
+
+    private void downloadImage() {   // Download image est à utiliser aux bons endroits ... Attention, il faut vérifier avant que l'on est bien identifié sous peine de faire planter l'appli.
+        StorageReference photoRef = getCloudStorageReference();
+         if (photoRef == null) return;
+        { ImageView imageView = (ImageView) findViewById(R.id.imageProfil);     // Load the image using Glide
+     Glide.with(this /* context */).using(new FirebaseImageLoader()
+             .load(photoRef)
+             .skipMemoryCache(true)
+             .diskCacheStrategy(DiskCacheStrategy.NONE)
+             .placeholder(R.drawable.ic_person_black_24dp)
+             .into(imageView));
+}}
+    private void uploadImage() {    StorageReference photoRef = getCloudStorageReference();
+        if (photoRef == null) return;
+        // on va chercher les données binaires de l'image de profil
+        ImageView imageView = (ImageView) findViewById(R.id.imageProfil);
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        Bitmap bitmap = imageView.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        29 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray(); // on lance l'upload
+        UploadTask uploadTask = photoRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener()
+        {
+            @Override
+            public void onFailure(@NonNull Exception exception)
+            {             // si on est là, échec de l'upload
+            }     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+                                          {
+                                              @Override
+                                              public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                                              {             // ok, l'image est uploadée // on fait pop un toast d'information
+                                                  Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.imageUploaded), Toast.LENGTH_SHORT);
+                                                  toast.show();
+                                              }
+                                          }
+        )
+        ; }
 }
+
+
+
 
 
 
