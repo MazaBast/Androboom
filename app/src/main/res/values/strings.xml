@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Androboom</string>
+    <string name="title">L\'appli qui fait BOOM</string>
+    <string name="StartAppli">Lancer</string>
+    <string name="StartAppliPortrait">Lancer</string>
+    <string name="action_logout">Deconnexion</string>
+    <string name="action_settings">Option</string>
+
+    <string name="facebook_application_id" translatable="false">1809914232370472</string>
+    <!-- Facebook Application ID, prefixed by 'fb'.  Enables Chrome Custom tabs. -->
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1809914232370472</string>
+
+</resources>

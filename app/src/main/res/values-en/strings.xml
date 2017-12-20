@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">The Bombing Application !</string>
+    <string name="StartAppli">Launch</string>
+    <string name="StartAppliPortrait">Launch</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_settings">Setting</string>
+
+    <string name="facebook_application_id" translatable="false">1809914232370472</string>
+    <!-- Facebook Application ID, prefixed by 'fb'.  Enables Chrome Custom tabs. -->
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1809914232370472</string>
+</resources>
