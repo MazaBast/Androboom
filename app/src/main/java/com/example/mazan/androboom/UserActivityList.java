@@ -1,6 +1,8 @@
 package com.example.mazan.androboom;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +28,7 @@ import java.util.List;
 
 
 public class UserActivityList extends AppCompatActivity {
+
 
     private class MyArrayAdapter extends ArrayAdapter<Profil> {
         List<Profil> liste;
@@ -72,8 +75,9 @@ public class UserActivityList extends AppCompatActivity {
 
             // on retourne le layout
             return layout;
+
         }
-            // on va chercher le bon profil dans la liste
+        // on va chercher le bon profil dans la liste
 
 
 /*
@@ -90,11 +94,14 @@ public class UserActivityList extends AppCompatActivity {
 */
 
 
-
         @Override
         public int getCount() {
             return liste.size();
-        }}
+        }
+
+
+        }
+
 
 
     @Override
@@ -129,4 +136,33 @@ public class UserActivityList extends AppCompatActivity {
 
 }
 
+/*
+// variable globale pour spécifier si on filtre ou pas boolean
+        filterConnected=false;
+private void showFilterDialog(){
+        // on crée un nouvel objet de type boite de dialogue
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        // on lui affecte un titre, et une liste de choix possibles
+        builder.setTitle(R.string.filter_dialog_title)
+        .setSingleChoiceItems(R.array.users_filter,filterConnected?0:1,new DialogInterface.OnClickListener(){
+@Override
+// méthode appelée quand l'utilisateur fait un choix
+// i contient le numéro du choix
+public void onClick(DialogInterface dialogInterface,int i){                     // si le premier item a été choisie, on filtre sur                     // uniquement les utilisateurs connectés.
+        filterConnected=(i==0);
+        // et on signale a l'adaptateur qu'il faut remettre                     // la liste à jour.
+        adapter.notifyDataSetChanged();
+        }
+        })
+        .setPositiveButton("Ok",new DialogInterface.OnClickListener(){                 // on a cliqué sur "ok", on ne fait rien.
+public void onClick(DialogInterface dialog,int id){
+        }
+        });
 
+        // on crée la boite
+        AlertDialog dialog=builder.create();     // et on l'affiche
+        dialog.show();
+
+        }
+
+*/
