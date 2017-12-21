@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,9 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -91,6 +95,18 @@ public class UserActivity extends AppCompatActivity {
             return true;
                 }
         });
+
+        Button bouton = (Button) findViewById(R.id.button3);
+        bouton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lancerUser1();
+            }
+        });}
+
+    private void lancerUser1() {Intent intent = new Intent(this, UserActivityList.class);
+        startActivity(intent);
+
 
     }
 
@@ -187,13 +203,42 @@ public class UserActivity extends AppCompatActivity {
 
     }
 
+    private Profil user = new Profil();
+    private void setUser() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser fuser = auth.getCurrentUser();
+        if (fuser != null) {
+            user.setUid(fuser.getUid());
+            user.setEmail(fuser.getEmail());
+            user.setConnected(true);
+        }
+    }
+
+    private void updateProfil(Profil user) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = mDatabase.child("Users").child(user.getUid());
+        ref.child("connected").setValue(true);
+        ref.child("email").setValue(user.getEmail());
+        ref.child("uid").setValue(user.getUid());
+    }
+
     @Override
     protected void onDestroy() {
         // on déconnecte l'utilisateur
         AuthUI.getInstance().signOut(this);
-        super.onDestroy();
+        user.setConnected(false);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth != null) {
+            FirebaseUser fuser = auth.getCurrentUser();
+            if (fuser != null) {
+                final FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference mreference =
+                        mDatabase.getReference().child("Users").child(fuser.getUid());
+                mreference.child("connected").setValue(false);
+                super.onDestroy();
+            }
+        }
     }
-
 /*
     private StorageReference getCloudStorageReference()
     {     // on va chercher l'email de l'utilisateur connecté
@@ -244,6 +289,10 @@ public class UserActivity extends AppCompatActivity {
                                           }
         )
         ; } */
+
+
+
+
 }
 
 
