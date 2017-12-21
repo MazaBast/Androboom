@@ -18,7 +18,7 @@
         </activity>
         <activity android:name=".UserActivity" />
 
-        <activity android:name=".userlistactivity" />
+        <activity android:name=".UserActivityList" />
     </application>
 
 </manifest>
