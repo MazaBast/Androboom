@@ -194,7 +194,7 @@ public class UserActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-
+/*
     private StorageReference getCloudStorageReference()
     {     // on va chercher l'email de l'utilisateur connecté
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -210,7 +210,7 @@ public class UserActivity extends AppCompatActivity {
         StorageReference photoRef = getCloudStorageReference();
          if (photoRef == null) return;
         { ImageView imageView = (ImageView) findViewById(R.id.imageProfil);     // Load the image using Glide
-     Glide.with(this /* context */).using(new FirebaseImageLoader()
+     Glide.with(this ).using(new FirebaseImageLoader()
              .load(photoRef)
              .skipMemoryCache(true)
              .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -225,7 +225,7 @@ public class UserActivity extends AppCompatActivity {
         imageView.buildDrawingCache();
         Bitmap bitmap = imageView.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        29 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray(); // on lance l'upload
         UploadTask uploadTask = photoRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener()
@@ -243,7 +243,7 @@ public class UserActivity extends AppCompatActivity {
                                               }
                                           }
         )
-        ; }
+        ; } */
 }
 
 
